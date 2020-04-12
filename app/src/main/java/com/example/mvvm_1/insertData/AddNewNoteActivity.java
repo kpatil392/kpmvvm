@@ -6,13 +6,14 @@ import android.text.TextUtils;
 import android.view.View;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import com.example.mvvm_1.R;
-import com.example.mvvm_1.databinding.AddnewNoteBinding;
 
-public class AddNewNoteActivity extends AppCompatActivity {
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
+
+public class AddNewNoteActivity extends Appc {
     AddnewNoteBinding binding;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
