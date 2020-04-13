@@ -46,6 +46,12 @@ public class MainActivity extends AppCompatActivity {
     LinearLayoutManager sLayoutManager;
 
 
+
+
+    private boolean loading = true;
+    int pastVisiblesItems, visibleItemCount, totalItemCount;
+    LinearLayoutManager mLayoutManager;
+
     ActivityMainBinding binding;
     NoteViewModel viewModel;
     NotesAdapter noteAdapter;
@@ -57,6 +63,13 @@ public class MainActivity extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(MainActivity.this, R.layout.activity_main);
         viewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
         notes = new ArrayList<>();
+
+        
+        mLayoutManager = new LinearLayoutManager(this);
+        binding.rvview.setLayoutManager(mLayoutManager);
+
+      /*  sLayoutManager = new LinearLayoutManager(getApplicationContext(), RecyclerView.VERTICAL, false);
+        binding.rvview.setLayoutManager(sLayoutManager);*/
         getData(0);
         binding.floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,14 +137,30 @@ public class MainActivity extends AppCompatActivity {
                             Log.i("Resp",example.getProduct_offset()+"--");
                             notes.addAll(example.getProducts());
 
-                            sLayoutManager = new LinearLayoutManager(getApplicationContext(), RecyclerView.VERTICAL, false);
-                            binding.rvview.setLayoutManager(sLayoutManager);
+                          
                             noteAdapter = new NotesAdapter(MainActivity.this, notes);
                             binding.rvview.setAdapter(noteAdapter);
                             noteAdapter.notifyDataSetChanged();
                         }
+                        binding.rvview.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                            @Override
+                            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                                if (dy > 0) { //check for scroll down
+                                    visibleItemCount = mLayoutManager.getChildCount();
+                                    totalItemCount = mLayoutManager.getItemCount();
+                                    pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition();
 
-                        binding.rvview.addOnScrollListener(new OnScrollListener() {
+                                    if (loading) {
+                                        if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                                            loading = false;
+                                            Log.v("...", "Last Item Wow !");
+                                            // Do pagination.. i.e. fetch new data
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                       /* binding.rvview.addOnScrollListener(new OnScrollListener() {
                             @Override
                             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                                 super.onScrollStateChanged(recyclerView, newState);
@@ -152,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
                                     onScrolled=false;
                                 }
                             }
-                        });
+                        });*/
                     }
 
                     @Override
